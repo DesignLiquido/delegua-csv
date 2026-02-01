@@ -1,19 +1,10 @@
-import * as caminho from 'path';
-import * as sistemaArquivos from 'fs';
-
-export interface OpcoesCsv {
-    delimitador?: string;
-    aspas?: string;
-    quebraLinha?: string;
-    cabecalho?: boolean;
-    ignorarLinhasVazias?: boolean;
-}
+import { OpcoesCsvInterface } from './opcoes-csv-interface';
 
 export type LinhaCsv = string[];
 export type TabelaCsv = LinhaCsv[];
 export type RegistroCsv = Record<string, string>;
 
-const PADRAO_OPCOES: Required<Omit<OpcoesCsv, 'cabecalho'>> & Pick<OpcoesCsv, 'cabecalho'> = {
+const PADRAO_OPCOES: Required<Omit<OpcoesCsvInterface, 'cabecalho'>> & Pick<OpcoesCsvInterface, 'cabecalho'> = {
     delimitador: ',',
     aspas: '"',
     quebraLinha: '\n',
@@ -21,14 +12,14 @@ const PADRAO_OPCOES: Required<Omit<OpcoesCsv, 'cabecalho'>> & Pick<OpcoesCsv, 'c
     ignorarLinhasVazias: true
 };
 
-function normalizarOpcoes(opcoes?: OpcoesCsv): Required<Omit<OpcoesCsv, 'cabecalho'>> & Pick<OpcoesCsv, 'cabecalho'> {
+function normalizarOpcoes(opcoes?: OpcoesCsvInterface): Required<Omit<OpcoesCsvInterface, 'cabecalho'>> & Pick<OpcoesCsvInterface, 'cabecalho'> {
     return {
         ...PADRAO_OPCOES,
         ...opcoes
     };
 }
 
-export function analisarCsv(texto: string, opcoes?: OpcoesCsv): TabelaCsv | RegistroCsv[] {
+export function analisarCsv(interpretador: any, texto: string, opcoes?: OpcoesCsvInterface): TabelaCsv | RegistroCsv[] {
     const { delimitador, aspas, quebraLinha, cabecalho, ignorarLinhasVazias } = normalizarOpcoes(opcoes);
     const linhas: LinhaCsv[] = [];
 
@@ -101,7 +92,7 @@ export function analisarCsv(texto: string, opcoes?: OpcoesCsv): TabelaCsv | Regi
     });
 }
 
-export function serializarCsv(linhas: TabelaCsv, opcoes?: OpcoesCsv): string {
+export function serializarCsv(interpretador: any, linhas: TabelaCsv, opcoes?: OpcoesCsvInterface): string {
     const { delimitador, aspas, quebraLinha } = normalizarOpcoes(opcoes);
 
     const escapar = (valor: string) => {
@@ -121,31 +112,8 @@ export function serializarCsv(linhas: TabelaCsv, opcoes?: OpcoesCsv): string {
 function logicaComumResolucaoCaminho(diretorioBaseInterpretador: string, caminhoArquivo: string) {
     let caminhoResolvido = caminhoArquivo;
     if (caminhoArquivo.startsWith('.')) {
-        caminhoResolvido = caminho.join(diretorioBaseInterpretador, caminhoArquivo);
+        caminhoResolvido = caminhoArquivo; // Web environments don't support relative path resolution
     }
 
     return caminhoResolvido;
 }
-
-export function lerCsv(
-    interpretador: { diretorioBase: string },
-    caminhoArquivo: string,
-    opcoes?: OpcoesCsv
-): TabelaCsv | RegistroCsv[] {
-    const caminhoResolvido = logicaComumResolucaoCaminho(interpretador.diretorioBase, caminhoArquivo);
-    const texto = sistemaArquivos.readFileSync(caminhoResolvido, 'utf-8');
-    return analisarCsv(texto, opcoes);
-}
-
-export function salvarCsv(
-    interpretador: { diretorioBase: string },
-    caminhoArquivo: string,
-    dados: TabelaCsv,
-    opcoes?: OpcoesCsv
-): void {
-    const caminhoResolvido = logicaComumResolucaoCaminho(interpretador.diretorioBase, caminhoArquivo);
-    const conteudo = serializarCsv(dados, opcoes);
-    sistemaArquivos.writeFileSync(caminhoResolvido, conteudo, 'utf-8');
-}
-
-export * from './csv';

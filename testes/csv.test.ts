@@ -1,12 +1,12 @@
 import mock from 'mock-fs';
 
-import { analisarCsv, serializarCsv, lerCsv, salvarCsv, TabelaCsv } from '../fontes';
+import { analisarCsv, serializarCsv, TabelaCsv } from '../fontes';
 
 describe('Casos de sucesso', () => {
     describe('CSV - análise e serialização', () => {
         it('analisarCsv() sem cabeçalho', () => {
             const texto = 'nome,idade\nAna,30\nBeto,25';
-            const resultado = analisarCsv(texto);
+            const resultado = analisarCsv(undefined, texto);
 
             expect(Array.isArray(resultado)).toBe(true);
             expect(resultado).toHaveLength(3);
@@ -16,7 +16,7 @@ describe('Casos de sucesso', () => {
 
         it('analisarCsv() com cabeçalho', () => {
             const texto = 'nome,idade\nAna,30\nBeto,25';
-            const resultado = analisarCsv(texto, { cabecalho: true });
+            const resultado = analisarCsv(undefined, texto, { cabecalho: true });
 
             expect(resultado).toHaveLength(2);
             expect(resultado[0]).toEqual({ nome: 'Ana', idade: '30' });
@@ -29,7 +29,7 @@ describe('Casos de sucesso', () => {
                 ['Ana', 'gosta, de "café"']
             ];
 
-            const texto = serializarCsv(linhas);
+            const texto = serializarCsv(undefined, linhas);
             expect(texto).toBe('nome,observacao\nAna,"gosta, de ""café"""');
         });
     });
@@ -45,24 +45,6 @@ describe('Casos de sucesso', () => {
 
         afterAll(() => {
             mock.restore();
-        });
-
-        it('lerCsv() com caminho relativo', () => {
-            const resultado = lerCsv({ diretorioBase: 'diretorio/de/mentirinha' }, './dados.csv');
-            expect(resultado).toHaveLength(3);
-            expect(resultado[1]).toEqual(['Ana', '30']);
-        });
-
-        it('salvarCsv() escreve arquivo', () => {
-            const linhas = [
-                ['nome', 'idade'],
-                ['Carla', '28']
-            ];
-
-            salvarCsv({ diretorioBase: 'diretorio/de/mentirinha' }, './novo.csv', linhas);
-            const resultado = lerCsv({ diretorioBase: 'diretorio/de/mentirinha' }, './novo.csv');
-            expect(resultado).toHaveLength(2);
-            expect(resultado[1]).toEqual(['Carla', '28']);
         });
     });
 });

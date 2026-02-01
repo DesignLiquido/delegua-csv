@@ -1,38 +1,4 @@
-import { lerCsv, salvarCsv, analisarCsv, serializarCsv } from './fontes/csv';
-
-const definicaoLerCsv = {
-    tipoRetorno: 'qualquer',
-    funcao: lerCsv,
-    argumentos: [
-        {
-            nome: 'caminhoArquivo',
-            tipo: 'texto'
-        },
-        {
-            nome: 'opcoes',
-            tipo: 'qualquer'
-        }
-    ]
-};
-
-const definicaoSalvarCsv = {
-    tipoRetorno: 'vazio',
-    funcao: salvarCsv,
-    argumentos: [
-        {
-            nome: 'caminhoArquivo',
-            tipo: 'texto'
-        },
-        {
-            nome: 'dados',
-            tipo: 'qualquer'
-        },
-        {
-            nome: 'opcoes',
-            tipo: 'qualquer'
-        }
-    ]
-};
+import { analisarCsv, serializarCsv } from './fontes/csv';
 
 const definicaoAnalisarCsv = {
     tipoRetorno: 'qualquer',
@@ -65,8 +31,6 @@ const definicaoSerializarCsv = {
 };
 
 export const DeleguaModuloCsv = {
-    lerCsv: definicaoLerCsv,
-    salvarCsv: definicaoSalvarCsv,
     analisarCsv: definicaoAnalisarCsv,
     serializarCsv: definicaoSerializarCsv
 };
