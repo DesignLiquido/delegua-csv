@@ -1,5 +1,5 @@
 {
-  "name": "delegua-csv",
+  "name": "@designliquido/delegua-csv",
   "version": "0.0.0",
   "description": "Biblioteca CSV para Delégua.",
   "main": "dist/index.js",
