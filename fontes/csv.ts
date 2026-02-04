@@ -1,4 +1,5 @@
 import { OpcoesCsvInterface } from './opcoes-csv-interface';
+import { SistemaArquivosInterface } from './sistema-arquivos-interface';
 
 export type LinhaCsv = string[];
 export type TabelaCsv = LinhaCsv[];
@@ -19,6 +20,13 @@ function normalizarOpcoes(opcoes?: OpcoesCsvInterface): Required<Omit<OpcoesCsvI
     };
 }
 
+/**
+ * 
+ * @param interpretador 
+ * @param texto 
+ * @param opcoes 
+ * @returns 
+ */
 export function analisarCsv(interpretador: any, texto: string, opcoes?: OpcoesCsvInterface): TabelaCsv | RegistroCsv[] {
     const { delimitador, aspas, quebraLinha, cabecalho, ignorarLinhasVazias } = normalizarOpcoes(opcoes);
     const linhas: LinhaCsv[] = [];
@@ -92,10 +100,8 @@ export function analisarCsv(interpretador: any, texto: string, opcoes?: OpcoesCs
     });
 }
 
-export function serializarCsv(interpretador: any, linhas: TabelaCsv, opcoes?: OpcoesCsvInterface): string {
-    const { delimitador, aspas, quebraLinha } = normalizarOpcoes(opcoes);
-
-    const escapar = (valor: string) => {
+function criarEscapador(delimitador: string, aspas: string) {
+    return (valor: string) => {
         const precisaAspas = valor.includes(delimitador) || valor.includes(aspas) || valor.includes('\n') || valor.includes('\r');
         if (!precisaAspas) {
             return valor;
@@ -103,17 +109,85 @@ export function serializarCsv(interpretador: any, linhas: TabelaCsv, opcoes?: Op
         const escapado = valor.split(aspas).join(aspas + aspas);
         return `${aspas}${escapado}${aspas}`;
     };
+}
+
+/**
+ * 
+ * @param interpretador 
+ * @param linhas 
+ * @param opcoes 
+ * @returns 
+ */
+export function serializarCsv(interpretador: any, linhas: TabelaCsv, opcoes?: OpcoesCsvInterface): string {
+    const { delimitador, aspas, quebraLinha } = normalizarOpcoes(opcoes);
+    const escapar = criarEscapador(delimitador, aspas);
 
     return linhas
         .map((linha) => linha.map((campo) => escapar(campo ?? '')).join(delimitador))
         .join(quebraLinha);
 }
 
-function logicaComumResolucaoCaminho(diretorioBaseInterpretador: string, caminhoArquivo: string) {
-    let caminhoResolvido = caminhoArquivo;
-    if (caminhoArquivo.startsWith('.')) {
-        caminhoResolvido = caminhoArquivo; // Web environments don't support relative path resolution
+/**
+ * 
+ * @param interpretador 
+ * @param registros 
+ * @param colunas 
+ * @param opcoes 
+ * @returns 
+ */
+export function serializarRegistros(
+    interpretador: any,
+    registros: RegistroCsv[],
+    colunas?: string[],
+    opcoes?: OpcoesCsvInterface
+): string {
+    if (registros.length === 0) {
+        return colunas ? colunas.join(normalizarOpcoes(opcoes).delimitador) : '';
     }
 
-    return caminhoResolvido;
+    const { delimitador, aspas, quebraLinha } = normalizarOpcoes(opcoes);
+    const escapar = criarEscapador(delimitador, aspas);
+
+    const cabecalhos = colunas ?? Object.keys(registros[0]);
+
+    const linhasCsv: string[] = [
+        cabecalhos.map((col) => escapar(col)).join(delimitador)
+    ];
+
+    for (const registro of registros) {
+        const valores = cabecalhos.map((col) => escapar(registro[col] ?? ''));
+        linhasCsv.push(valores.join(delimitador));
+    }
+
+    return linhasCsv.join(quebraLinha);
+}
+
+export async function lerCsv(
+    sistemaArquivos: SistemaArquivosInterface,
+    caminho: string,
+    opcoes?: OpcoesCsvInterface
+): Promise<TabelaCsv | RegistroCsv[]> {
+    const conteudo = await sistemaArquivos.lerArquivo(caminho);
+    return analisarCsv(undefined, conteudo, opcoes);
+}
+
+export async function escreverCsv(
+    sistemaArquivos: SistemaArquivosInterface,
+    caminho: string,
+    linhas: TabelaCsv,
+    opcoes?: OpcoesCsvInterface
+): Promise<void> {
+    const conteudo = serializarCsv(undefined, linhas, opcoes);
+    await sistemaArquivos.escreverArquivo(caminho, conteudo);
+}
+
+export async function escreverRegistrosCsv(
+    sistemaArquivos: SistemaArquivosInterface,
+    caminho: string,
+    registros: RegistroCsv[],
+    colunas?: string[],
+    opcoes?: OpcoesCsvInterface
+): Promise<void> {
+    const conteudo = serializarRegistros(undefined, registros, colunas, opcoes);
+    await sistemaArquivos.escreverArquivo(caminho, conteudo);
 }
