@@ -91,6 +91,17 @@ describe('Casos de sucesso', () => {
             const texto = vetorDicionariosParaCsv(undefined, registros, ['nome', 'idade']);
             expect(texto).toBe('nome,idade\nAna,30\nBeto,');
         });
+
+        it('serializarRegistros() com valores numéricos', () => {
+            const registros: RegistroCsv[] = [
+                { nome: 'Ana', idade: 28, cidade: 'Rio de Janeiro' },
+                { nome: 'Bruno', idade: 34, cidade: 'São Paulo' },
+                { nome: 'Carla', idade: 23, cidade: 'Belo Horizonte' }
+            ];
+
+            const texto = vetorDicionariosParaCsv(undefined, registros);
+            expect(texto).toBe('nome,idade,cidade\nAna,28,Rio de Janeiro\nBruno,34,São Paulo\nCarla,23,Belo Horizonte');
+        });
     });
 
     describe('Leitura e escrita de CSV', () => {

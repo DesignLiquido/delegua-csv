@@ -3,7 +3,7 @@ import { SistemaArquivosInterface } from './sistema-arquivos-interface';
 
 export type LinhaCsv = string[];
 export type TabelaCsv = LinhaCsv[];
-export type RegistroCsv = Record<string, string>;
+export type RegistroCsv = Record<string, unknown>;
 
 const PADRAO_OPCOES: Required<Omit<OpcoesCsvInterface, 'cabecalho'>> & Pick<OpcoesCsvInterface, 'cabecalho'> = {
     delimitador: ',',
@@ -101,12 +101,13 @@ export function textoParaObjetoCsv(interpretador: any, texto: string, opcoes?: O
 }
 
 function criarEscapador(delimitador: string, aspas: string) {
-    return (valor: string) => {
-        const precisaAspas = valor.includes(delimitador) || valor.includes(aspas) || valor.includes('\n') || valor.includes('\r');
+    return (valor: unknown) => {
+        const texto = valor == null ? '' : String(valor);
+        const precisaAspas = texto.includes(delimitador) || texto.includes(aspas) || texto.includes('\n') || texto.includes('\r');
         if (!precisaAspas) {
-            return valor;
+            return texto;
         }
-        const escapado = valor.split(aspas).join(aspas + aspas);
+        const escapado = texto.split(aspas).join(aspas + aspas);
         return `${aspas}${escapado}${aspas}`;
     };
 }
