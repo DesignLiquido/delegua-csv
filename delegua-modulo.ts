@@ -1,8 +1,8 @@
-import { analisarCsv, serializarCsv } from './fontes/csv';
+import { textoParaObjetoCsv, objetoCsvParaTexto, vetorDicionariosParaCsv } from './fontes/csv';
 
-const definicaoAnalisarCsv = {
+const definicaoTextoParaObjetoCsv = {
     tipoRetorno: 'qualquer',
-    funcao: analisarCsv,
+    funcao: textoParaObjetoCsv,
     argumentos: [
         {
             nome: 'texto',
@@ -15,9 +15,9 @@ const definicaoAnalisarCsv = {
     ]
 };
 
-const definicaoSerializarCsv = {
+const definicaoObjetoCsvParaTexto = {
     tipoRetorno: 'texto',
-    funcao: serializarCsv,
+    funcao: objetoCsvParaTexto,
     argumentos: [
         {
             nome: 'linhas',
@@ -30,7 +30,27 @@ const definicaoSerializarCsv = {
     ]
 };
 
+const definicaoVetorDicionariosParaCsv = {
+    tipoRetorno: 'texto',
+    funcao: vetorDicionariosParaCsv,
+    argumentos: [
+        {
+            nome: 'registros',
+            tipo: 'qualquer'
+        },
+        {
+            nome: 'colunas',
+            tipo: 'qualquer'
+        },
+        {
+            nome: 'opcoes',
+            tipo: 'qualquer'
+        }
+    ]
+};
+
 export const DeleguaModuloCsv = {
-    analisarCsv: definicaoAnalisarCsv,
-    serializarCsv: definicaoSerializarCsv
+    textoParaObjetoCsv: definicaoTextoParaObjetoCsv,
+    objetoCsvParaTexto: definicaoObjetoCsvParaTexto,
+    vetorDicionariosParaCsv: definicaoVetorDicionariosParaCsv
 };

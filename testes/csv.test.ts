@@ -1,7 +1,7 @@
 import {
-    analisarCsv,
-    serializarCsv,
-    serializarRegistros,
+    textoParaObjetoCsv,
+    objetoCsvParaTexto,
+    vetorDicionariosParaCsv,
     lerCsv,
     escreverCsv,
     escreverRegistrosCsv,
@@ -14,7 +14,7 @@ describe('Casos de sucesso', () => {
     describe('CSV - análise e serialização', () => {
         it('analisarCsv() sem cabeçalho', () => {
             const texto = 'nome,idade\nAna,30\nBeto,25';
-            const resultado = analisarCsv(undefined, texto);
+            const resultado = textoParaObjetoCsv(undefined, texto);
 
             expect(Array.isArray(resultado)).toBe(true);
             expect(resultado).toHaveLength(3);
@@ -24,7 +24,7 @@ describe('Casos de sucesso', () => {
 
         it('analisarCsv() com cabeçalho', () => {
             const texto = 'nome,idade\nAna,30\nBeto,25';
-            const resultado = analisarCsv(undefined, texto, { cabecalho: true });
+            const resultado = textoParaObjetoCsv(undefined, texto, { cabecalho: true });
 
             expect(resultado).toHaveLength(2);
             expect(resultado[0]).toEqual({ nome: 'Ana', idade: '30' });
@@ -37,7 +37,7 @@ describe('Casos de sucesso', () => {
                 ['Ana', 'gosta, de "café"']
             ];
 
-            const texto = serializarCsv(undefined, linhas);
+            const texto = objetoCsvParaTexto(undefined, linhas);
             expect(texto).toBe('nome,observacao\nAna,"gosta, de ""café"""');
         });
 
@@ -47,7 +47,7 @@ describe('Casos de sucesso', () => {
                 { nome: 'Beto', idade: '25' }
             ];
 
-            const texto = serializarRegistros(undefined, registros);
+            const texto = vetorDicionariosParaCsv(undefined, registros);
             expect(texto).toBe('nome,idade\nAna,30\nBeto,25');
         });
 
@@ -57,19 +57,19 @@ describe('Casos de sucesso', () => {
                 { nome: 'Beto', idade: '25', cidade: 'RJ' }
             ];
 
-            const texto = serializarRegistros(undefined, registros, ['cidade', 'nome']);
+            const texto = vetorDicionariosParaCsv(undefined, registros, ['cidade', 'nome']);
             expect(texto).toBe('cidade,nome\nSP,Ana\nRJ,Beto');
         });
 
         it('serializarRegistros() com vetor vazio e colunas', () => {
             const registros: RegistroCsv[] = [];
-            const texto = serializarRegistros(undefined, registros, ['nome', 'idade']);
+            const texto = vetorDicionariosParaCsv(undefined, registros, ['nome', 'idade']);
             expect(texto).toBe('nome,idade');
         });
 
         it('serializarRegistros() com vetor vazio sem colunas', () => {
             const registros: RegistroCsv[] = [];
-            const texto = serializarRegistros(undefined, registros);
+            const texto = vetorDicionariosParaCsv(undefined, registros);
             expect(texto).toBe('');
         });
 
@@ -78,7 +78,7 @@ describe('Casos de sucesso', () => {
                 { nome: 'Ana, Maria', observacao: 'disse "olá"' }
             ];
 
-            const texto = serializarRegistros(undefined, registros);
+            const texto = vetorDicionariosParaCsv(undefined, registros);
             expect(texto).toBe('nome,observacao\n"Ana, Maria","disse ""olá"""');
         });
 
@@ -88,7 +88,7 @@ describe('Casos de sucesso', () => {
                 { nome: 'Beto' }
             ];
 
-            const texto = serializarRegistros(undefined, registros, ['nome', 'idade']);
+            const texto = vetorDicionariosParaCsv(undefined, registros, ['nome', 'idade']);
             expect(texto).toBe('nome,idade\nAna,30\nBeto,');
         });
     });
