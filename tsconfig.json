@@ -7,7 +7,7 @@
     "declarationMap": true,
     "sourceMap": true,
     "outDir": "dist",
-    "rootDir": ".",
+    "rootDir": "./fontes",
     "strict": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
@@ -15,6 +15,6 @@
     "moduleResolution": "node",
     "resolveJsonModule": true
   },
-  "include": ["fontes/**/*", "delegua-modulo.ts"],
+  "include": ["fontes/**/*"],
   "exclude": ["dist", "node_modules", "testes"]
 }

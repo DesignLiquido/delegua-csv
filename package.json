@@ -2,8 +2,8 @@
   "name": "@designliquido/delegua-csv",
   "version": "0.0.3",
   "description": "Biblioteca CSV para Delégua.",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "index.js",
+  "types": "index.d.ts",
   "license": "MIT",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
@@ -14,7 +14,7 @@
     "testes-unitarios": "jest --coverage"
   },
   "devDependencies": {
-    "@designliquido/delegua": "^1.4.2",
+    "@designliquido/delegua": "^1.26.1",
     "@types/jest": "^29.5.12",
     "@types/node": "^20.11.30",
     "copyfiles": "^2.4.1",

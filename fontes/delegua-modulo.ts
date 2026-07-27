@@ -1,4 +1,4 @@
-import { textoParaObjetoCsv, objetoCsvParaTexto, vetorDicionariosParaCsv } from './fontes/csv';
+import { textoParaObjetoCsv, objetoCsvParaTexto, vetorDicionariosParaCsv } from './csv';
 
 const definicaoTextoParaObjetoCsv = {
     tipoRetorno: 'qualquer',
